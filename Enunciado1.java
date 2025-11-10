@@ -27,6 +27,7 @@ public class Enunciado1 {
         runExample();
         runLargeTests();
         runWorstCase();
+        System.out.println();
         System.out.println("Complexidade (pior caso): O(N * M)");
     }
 
@@ -78,30 +79,38 @@ public class Enunciado1 {
     }
 
     private static void runExample() {
+        printSection("Exemplo");
         String text = "ABCDCBDCBDACBDABDCBADF";
         String pattern = "ADF";
-        System.out.println("Exemplo: " + bruteForce(text, pattern));
+        printContext("Texto", "\"" + text + "\"");
+        printContext("Padrão", "\"" + pattern + "\"");
+        printResult("Força Bruta", bruteForce(text, pattern));
     }
 
     private static void runLargeTests() {
+        printSection("Tamanhos crescentes");
         int[] sizes = {1_000, 50_000, 600_000};
         String pattern = buildString(20, 'B');
-
+        printContext("Tamanho do padrão", format(pattern.length()));
         for (int size : sizes) {
+            System.out.println();
+            printContext("Tamanho do texto", format(size));
+            printContext("Posição esperada", format(size - pattern.length()));
             String text = buildString(size - pattern.length(), 'A') + pattern;
-            SearchResult result = bruteForce(text, pattern);
-            System.out.println("Texto=" + format(size) + " | " + result);
+            printResult("Força Bruta", bruteForce(text, pattern));
         }
     }
 
     private static void runWorstCase() {
+        printSection("Pior caso");
         int[] sizes = {1_000, 10_000, 50_000};
         String pattern = "AAAAAB";
-
+        printContext("Padrão testado", "\"" + pattern + "\"");
         for (int size : sizes) {
+            System.out.println();
+            printContext("Tamanho do texto", format(size));
             String text = buildString(size, 'A');
-            SearchResult result = bruteForce(text, pattern);
-            System.out.println("Pior caso texto=" + format(size) + " | " + result);
+            printResult("Força Bruta", bruteForce(text, pattern));
         }
     }
 
@@ -113,5 +122,20 @@ public class Enunciado1 {
 
     private static String format(int value) {
         return String.format("%,d", value);
+    }
+
+    private static void printSection(String title) {
+        System.out.println();
+        System.out.println(title);
+        System.out.println("-".repeat(title.length()));
+    }
+
+    private static void printContext(String label, String value) {
+        System.out.printf("%-25s | %s%n", label, value);
+    }
+
+    private static void printResult(String label, SearchResult result) {
+        System.out.printf("%-25s | pos=%-7d | it=%-10d | inst=%-12d | tempo=%8.3f ms%n",
+                label, result.position, result.iterations, result.instructions, result.timeNanos / 1_000_000.0);
     }
 }
